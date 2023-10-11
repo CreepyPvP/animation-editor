@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.20.0 FATAL_ERROR)
 
-project(divegame)
+project(animeditor)
 
 # Clang deez nuts
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
