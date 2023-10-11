@@ -10,6 +10,11 @@
 #include "defines.hpp"
 #include "shader.hpp"
 
+// IMGUI
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #define Vao unsigned int
 
 struct Window {
@@ -66,6 +71,17 @@ static void initWindow() {
     }
     glfwSetFramebufferSizeCallback(globalWindow.handle, frameBufferResizeCallback);
     glfwMakeContextCurrent(globalWindow.handle);
+
+    // IMGUI
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(globalWindow.handle, true);
+    ImGui_ImplOpenGL3_Init();
 }
 
 static void setupSquareVao() {
@@ -137,6 +153,12 @@ int main() {
             glfwSetWindowShouldClose(globalWindow.handle, true);
         }
 
+        // IMGUI
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
+
         float currentFrame = glfwGetTime();
         delta = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -149,7 +171,17 @@ int main() {
         setUniformVec2(gridShader.uScreenDimensions, &screenDimensions);
         GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
+        // IMGUI
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(globalWindow.handle);
         glfwPollEvents();
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwTerminate();
 }
