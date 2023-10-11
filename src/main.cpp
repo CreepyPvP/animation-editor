@@ -66,7 +66,6 @@ static void initWindow() {
     }
     glfwSetFramebufferSizeCallback(globalWindow.handle, frameBufferResizeCallback);
     glfwMakeContextCurrent(globalWindow.handle);
-    glfwSwapInterval(0);
 }
 
 static void setupSquareVao() {

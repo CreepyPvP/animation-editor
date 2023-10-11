@@ -45,6 +45,7 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 set(GLFW_ROOT_DIR external/glfw)
 set(GLAD_ROOT_DIR external/glad)
 set(GLM_ROOT_DIR external/glm)
+set(IMGUI_ROOT_DIR external/imgui)
 
 
 # Add the External Libraries / Files Directory
