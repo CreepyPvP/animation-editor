@@ -32,6 +32,7 @@ IF (WIN32)
 
         # IMGUI
         ${IMGUI_ROOT_DIR}/imgui.cpp
+        ${IMGUI_ROOT_DIR}/imgui_demo.cpp
         ${IMGUI_ROOT_DIR}/imgui_draw.cpp
         ${IMGUI_ROOT_DIR}/imgui_tables.cpp
         ${IMGUI_ROOT_DIR}/imgui_widgets.cpp
