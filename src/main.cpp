@@ -117,7 +117,8 @@ static void renderMenu() {
     // if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
     windowFlags |= ImGuiWindowFlags_MenuBar;
     windowFlags |= ImGuiWindowFlags_NoMove;
-    windowFlags |= ImGuiWindowFlags_NoResize;
+    windowFlags |= ImGuiWindowFlags_NoDecoration;
+    // windowFlags |= ImGuiWindowFlags_NoResize;
     // if (no_collapse)        window_flags |= ImGuiWindowFlags_NoCollapse;
     // if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
     // if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
@@ -128,7 +129,7 @@ static void renderMenu() {
     ImVec2 pos = ImVec2(globalWindow.width, 0);
     ImGui::SetNextWindowPos(pos, 0, pivot);
 
-    if (!ImGui::Begin("Some gui goes here", NULL, windowFlags)) {
+    if (!ImGui::Begin("Animations", NULL, windowFlags)) {
         ImGui::End();
         return;
     }
