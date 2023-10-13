@@ -25,28 +25,15 @@ struct Window {
 
 static Window globalWindow;
 static Vao squareVao;
-static glm::mat4 projection;
 
 static void updateViewport(int width, int height) {
     glViewport(0, 0, width, height);
-}
-
-static void updateProjection() {
-    projection = glm::ortho(
-        (float) (-globalWindow.width / 2),
-        (float) (globalWindow.width / 2),
-        (float) (-globalWindow.height / 2),
-        (float) (globalWindow.height / 2),
-        0.1f,
-        100.0f
-    );
 }
 
 static void frameBufferResizeCallback(GLFWwindow *window, int width, int height) {
     updateViewport(width, height);
     globalWindow.width = width;
     globalWindow.height = height;
-    updateProjection();
 }
 
 static void initWindow() {
@@ -124,6 +111,34 @@ static void setupSquareVao() {
     GL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 }
 
+static void renderMenu() {
+    ImGuiWindowFlags windowFlags = 0;
+    windowFlags |= ImGuiWindowFlags_NoTitleBar;
+    // if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
+    windowFlags |= ImGuiWindowFlags_MenuBar;
+    windowFlags |= ImGuiWindowFlags_NoMove;
+    windowFlags |= ImGuiWindowFlags_NoResize;
+    // if (no_collapse)        window_flags |= ImGuiWindowFlags_NoCollapse;
+    // if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
+    // if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
+    // if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+    // if (unsaved_document)   window_flags |= ImGuiWindowFlags_UnsavedDocument;
+
+    ImVec2 pivot = ImVec2(1, 0);
+    ImVec2 pos = ImVec2(globalWindow.width, 0);
+    ImGui::SetNextWindowPos(pos, 0, pivot);
+
+    if (!ImGui::Begin("Some gui goes here", NULL, windowFlags)) {
+        ImGui::End();
+        return;
+    }
+    if (ImGui::CollapsingHeader("Animations")) {
+
+    }
+
+    ImGui::End();
+}
+
 int main() {
     initWindow();
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -133,11 +148,7 @@ int main() {
     GL(glEnable(GL_BLEND));
     GL(glEnable(GL_MULTISAMPLE));
     GL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-    updateProjection();
     setupSquareVao();
-
-    glm::mat4 view = 
-        glm::lookAt(glm::vec3(0, 0, 100), glm::vec3(0), glm::vec3(0, 1, 0));
 
     GridShader gridShader = createGridShader(
         "../shader/gridVert.glsl",
@@ -157,7 +168,8 @@ int main() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGui::ShowDemoWindow();
+
+        renderMenu();
 
         float currentFrame = glfwGetTime();
         delta = currentFrame - lastFrame;
