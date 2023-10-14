@@ -127,14 +127,17 @@ static void renderMenu() {
 
     ImVec2 pivot = ImVec2(1, 0);
     ImVec2 pos = ImVec2(globalWindow.width, 0);
+
     ImGui::SetNextWindowPos(pos, 0, pivot);
+    ImGui::SetNextWindowSize(ImVec2(320, globalWindow.height));
 
     if (!ImGui::Begin("Animations", NULL, windowFlags)) {
         ImGui::End();
         return;
     }
     if (ImGui::CollapsingHeader("Animations")) {
-
+        ImGui::TextWrapped("Animation 1");
+        ImGui::TextWrapped("Animation 2");
     }
 
     ImGui::End();
