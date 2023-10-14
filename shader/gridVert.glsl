@@ -8,6 +8,6 @@ out vec2 pos;
 
 void main() {
     gl_Position = vec4(aPos, 0, 1);
-    pos = aPos * screenDimensions;
+    pos = aPos * normalize(screenDimensions);
 }
 
