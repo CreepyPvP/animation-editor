@@ -23,7 +23,7 @@ void main() {
 
     out_Color = maxAlpha(
         grid(pos, 10, vec3(0.2, 0.2, 0.2), 1),
-        grid(pos, 2, vec3(0.4, 0.4, 0.4), 1.5)
+        grid(pos, 5, vec3(0.4, 0.4, 0.4), 1)
     );
 }
 
