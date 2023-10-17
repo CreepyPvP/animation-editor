@@ -1,6 +1,6 @@
 #pragma once
 
-#define MAX_UI_LAYER
+#define MAX_UI_LAYER 10
 
 struct UiStack {
     float xOff;

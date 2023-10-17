@@ -8,8 +8,8 @@ void beginContainer(int id, UiContext* ctx) {
     int prev = ctx->currentStackDepth;
     if (prev >= 0) {
         UiStack parentStack = ctx->stack[prev];
-        stack.xOff = state->xOff + parentStack.xOff;
-        stack.yOff = state->yOff + parentStack.yOff;
+        stack.xOff = parentStack.xOff;
+        stack.yOff = parentStack.yOff;
     } else {
         stack.xOff = 0;
         stack.yOff = 0;
