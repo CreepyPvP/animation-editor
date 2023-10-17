@@ -10,11 +10,6 @@
 #include "defines.hpp"
 #include "shader.hpp"
 
-// IMGUI
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
 #define Vao unsigned int
 
 struct Window {
@@ -58,17 +53,6 @@ static void initWindow() {
     }
     glfwSetFramebufferSizeCallback(globalWindow.handle, frameBufferResizeCallback);
     glfwMakeContextCurrent(globalWindow.handle);
-
-    // IMGUI
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(globalWindow.handle, true);
-    ImGui_ImplOpenGL3_Init();
 }
 
 static void setupSquareVao() {
@@ -111,38 +95,6 @@ static void setupSquareVao() {
     GL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 }
 
-static void renderMenu() {
-    ImGuiWindowFlags windowFlags = 0;
-    windowFlags |= ImGuiWindowFlags_NoTitleBar;
-    // if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
-    windowFlags |= ImGuiWindowFlags_MenuBar;
-    windowFlags |= ImGuiWindowFlags_NoMove;
-    // windowFlags |= ImGuiWindowFlags_NoDecoration;
-    // windowFlags |= ImGuiWindowFlags_NoResize;
-    // if (no_collapse)        window_flags |= ImGuiWindowFlags_NoCollapse;
-    // if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
-    // if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
-    // if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
-    // if (unsaved_document)   window_flags |= ImGuiWindowFlags_UnsavedDocument;
-
-    ImVec2 pivot = ImVec2(1, 0);
-    ImVec2 pos = ImVec2(globalWindow.width, 0);
-
-    ImGui::SetNextWindowPos(pos, 0, pivot);
-    // ImGui::SetNextWindowSize(ImVec2(320, globalWindow.height));
-
-    if (!ImGui::Begin("Animations", NULL, windowFlags)) {
-        ImGui::End();
-        return;
-    }
-    if (ImGui::CollapsingHeader("Animations")) {
-        ImGui::TextWrapped("Animation 1");
-        ImGui::TextWrapped("Animation 2");
-    }
-
-    ImGui::End();
-}
-
 int main() {
     initWindow();
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -168,13 +120,6 @@ int main() {
             glfwSetWindowShouldClose(globalWindow.handle, true);
         }
 
-        // IMGUI
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        renderMenu();
-
         float currentFrame = glfwGetTime();
         delta = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -187,17 +132,9 @@ int main() {
         setUniformVec2(gridShader.uScreenDimensions, &screenDimensions);
         GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
-        // IMGUI
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
         glfwSwapBuffers(globalWindow.handle);
         glfwPollEvents();
     }
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 
     glfwTerminate();
 }
