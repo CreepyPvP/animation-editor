@@ -12,7 +12,6 @@ set(CMAKE_BUILD_TYPE Debug)
 set(GLFW_ROOT_DIR external/glfw)
 set(GLAD_ROOT_DIR external/glad)
 set(GLM_ROOT_DIR external/glm)
-set(IMGUI_ROOT_DIR external/imgui)
 
 # Add all Header Files
 file(GLOB_RECURSE HEADER_FILES 
@@ -29,15 +28,6 @@ IF (WIN32)
     file(GLOB_RECURSE SOURCE_FILES 
         ${CMAKE_SOURCE_DIR}/src/*.cpp
         ${CMAKE_SOURCE_DIR}/platform/windows.cpp
-
-        # IMGUI
-        ${IMGUI_ROOT_DIR}/imgui.cpp
-        ${IMGUI_ROOT_DIR}/imgui_demo.cpp
-        ${IMGUI_ROOT_DIR}/imgui_draw.cpp
-        ${IMGUI_ROOT_DIR}/imgui_tables.cpp
-        ${IMGUI_ROOT_DIR}/imgui_widgets.cpp
-        ${IMGUI_ROOT_DIR}/backends/imgui_impl_opengl3.cpp
-        ${IMGUI_ROOT_DIR}/backends/imgui_impl_glfw.cpp
     )
 ELSE()
     # Linux libraries:
@@ -46,15 +36,6 @@ ELSE()
     file(GLOB_RECURSE SOURCE_FILES 
         ${CMAKE_SOURCE_DIR}/src/*.cpp
         ${CMAKE_SOURCE_DIR}/platform/linux.cpp
-
-        # IMGUI
-        ${IMGUI_ROOT_DIR}/imgui.cpp
-        ${IMGUI_ROOT_DIR}/imgui_demo.cpp
-        ${IMGUI_ROOT_DIR}/imgui_draw.cpp
-        ${IMGUI_ROOT_DIR}/imgui_tables.cpp
-        ${IMGUI_ROOT_DIR}/imgui_widgets.cpp
-        ${IMGUI_ROOT_DIR}/backends/imgui_impl_opengl3.cpp
-        ${IMGUI_ROOT_DIR}/backends/imgui_impl_glfw.cpp
     )
 ENDIF()
 
@@ -74,8 +55,6 @@ target_include_directories(${PROJECT_NAME}
 	PUBLIC ${GLFW_ROOT_DIR}/include
     PUBLIC ${GLAD_ROOT_DIR}/include/glad
     PUBLIC ${GLM_ROOT_DIR}/include
-    PUBLIC ${IMGUI_ROOT_DIR}
-    PUBLIC ${IMGUI_ROOT_DIR}/backends
     PUBLIC include
 )
 
@@ -83,7 +62,6 @@ target_link_directories(${PROJECT_NAME}
 	PRIVATE ${GLFW_ROOT_DIR}/src
 	PRIVATE ${GLAD_ROOT_DIR}/src
     PRIVATE ${GLM_ROOT_DIR}/src
-    PRIVATE ${IMGUI_ROOT_DIR}/src
 )
 
 # Add the Libs to the Linker for the Project
