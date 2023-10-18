@@ -40,19 +40,23 @@ static void initWindow() {
 
     globalWindow.width = 1280;
     globalWindow.height = 720;
-    globalWindow.handle = 
-        glfwCreateWindow(
-            globalWindow.width, 
-            globalWindow.height,
-            "Physics",
-            NULL,
-            NULL
-        );
+    globalWindow.handle = glfwCreateWindow(
+        globalWindow.width, 
+        globalWindow.height,
+        "Animation Editor",
+        NULL,
+        NULL
+    );
     if (!globalWindow.handle) {
         printf("Failed to create window\n");
     }
+
     glfwSetFramebufferSizeCallback(globalWindow.handle, frameBufferResizeCallback);
     glfwMakeContextCurrent(globalWindow.handle);
+
+    int fbW, fbH;
+    glfwGetFramebufferSize(globalWindow.handle, &fbW, &fbH);
+    printf("fbW: %d, fbH: %d\n", fbW, fbH);
 }
 
 static void setupSquareVao() {
