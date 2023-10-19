@@ -27,10 +27,16 @@ static void updateViewport(int width, int height) {
     glViewport(0, 0, width, height);
 }
 
+static void updateProjection() {
+    projection = glm::ortho(0, globalWindow.width, globalWindow.height, 0, 0, 100);
+}
+
 static void frameBufferResizeCallback(GLFWwindow *window, int width, int height) {
     updateViewport(width, height);
     globalWindow.width = width;
     globalWindow.height = height;
+
+    updateProjection();
 }
 
 static void initWindow() {
@@ -56,9 +62,11 @@ static void initWindow() {
     glfwSetFramebufferSizeCallback(globalWindow.handle, frameBufferResizeCallback);
     glfwMakeContextCurrent(globalWindow.handle);
 
-    int fbW, fbH;
-    glfwGetFramebufferSize(globalWindow.handle, &fbW, &fbH);
-    printf("fbW: %d, fbH: %d\n", fbW, fbH);
+    // int fbW, fbH;
+    // glfwGetFramebufferSize(globalWindow.handle, &fbW, &fbH);
+    // printf("fbW: %d, fbH: %d\n", fbW, fbH);
+
+    updateProjection();
 }
 
 static void setupSquareVao() {
@@ -113,6 +121,11 @@ int main() {
     setupSquareVao();
 
     GridShader gridShader = createGridShader(
+        "../shader/gridVert.glsl",
+        "../shader/gridFrag.glsl"
+    );
+
+    UiShader uiShader = createUiShader(
         "../shader/gridVert.glsl",
         "../shader/gridFrag.glsl"
     );
