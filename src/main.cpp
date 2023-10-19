@@ -21,6 +21,8 @@ struct Window {
 static Window globalWindow;
 static Vao squareVao;
 
+static glm::mat4 projection;
+
 static void updateViewport(int width, int height) {
     glViewport(0, 0, width, height);
 }

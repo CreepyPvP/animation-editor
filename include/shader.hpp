@@ -10,7 +10,13 @@ struct GridShader {
     Uniform uScreenDimensions;
 };
 
+struct UiShader {
+    Program id;
+};
+
 GridShader createGridShader(std::string vert, std::string frag);
+
+UiShader createUiShader(std::string vert, std::string frag);
 
 void setUniformMat4(unsigned int uniformId, glm::mat4* matrix);
 

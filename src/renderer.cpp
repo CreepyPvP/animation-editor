@@ -1,6 +1,6 @@
 #include "renderer.hpp"
 #include <stdlib.h>
-
+#include <math.h>
 
 void GeometryGenerator::init(int vertices, int indices) {
     vertexBuffer = (Vertex*) malloc(sizeof(Vertex) * vertices);
@@ -23,18 +23,24 @@ Batch GeometryGenerator::endBatch() {
     return b;
 }
 
-void GeometryGenerator::drawRectangle(float x, float y, float width, float height) {
+void GeometryGenerator::drawRectangle(float x1, float y1, float x2, float y2) {
     int vertex = vertexBase + vertexSprite;
     int index = indexBase + indexSprite;
 
-    vertexBuffer[vertex + 0].x = x;
-    vertexBuffer[vertex + 0].y = y + height;
-    vertexBuffer[vertex + 1].x = x + width;
-    vertexBuffer[vertex + 1].y = y + height;
-    vertexBuffer[vertex + 2].x = x;
-    vertexBuffer[vertex + 2].y = y;
-    vertexBuffer[vertex + 3].x = x + width;
-    vertexBuffer[vertex + 3].y = y;
+    // Scale with dpi factor here
+    float startX = floor(x1 + 0.5);
+    float startY = floor(y1 + 0.5);
+    float endX = floor(x2 + 0.5);
+    float endY = floor(y2 + 0.5);
+
+    vertexBuffer[vertex + 0].x = startX;
+    vertexBuffer[vertex + 0].y = endY;
+    vertexBuffer[vertex + 1].x = endX;
+    vertexBuffer[vertex + 1].y = endY;
+    vertexBuffer[vertex + 2].x = startX;
+    vertexBuffer[vertex + 2].y = startY;
+    vertexBuffer[vertex + 3].x = endX;
+    vertexBuffer[vertex + 3].y = startY;
 
     indexBuffer[index + 0] = 1 + vertex;
     indexBuffer[index + 1] = 3 + vertex;
@@ -46,3 +52,5 @@ void GeometryGenerator::drawRectangle(float x, float y, float width, float heigh
     vertexSprite += 4;
     indexSprite += 6;
 }
+
+

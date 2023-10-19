@@ -70,6 +70,12 @@ GridShader createGridShader(std::string vert, std::string frag) {
     return shader;
 }
 
+UiShader createUiShader(std::string vert, std::string frag) {
+    UiShader shader;
+    shader.id = createShader(vert, frag);
+    return shader;
+}
+
 void setUniformMat4(unsigned int uniformId, glm::mat4 *matrix) {
     glUniformMatrix4fv(uniformId, 1, GL_FALSE, &(*matrix)[0][0]);
 }
