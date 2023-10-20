@@ -30,7 +30,14 @@ static void updateViewport(int width, int height) {
 }
 
 static void updateProjection() {
-    projection = glm::ortho(0, globalWindow.width, globalWindow.height, 0, 0, 100);
+    projection = glm::ortho(
+        0.0f, 
+        (float) globalWindow.width, 
+        (float) globalWindow.height, 
+        0.0f, 
+        .1f,
+        1000.0f
+    );
 }
 
 static void frameBufferResizeCallback(GLFWwindow *window, int width, int height) {
@@ -118,7 +125,7 @@ int main() {
     }
 
     GL(glEnable(GL_BLEND));
-    GL(glEnable(GL_MULTISAMPLE));
+    // GL(glEnable(GL_MULTISAMPLE));
     GL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     setupSquareVao();
     unsigned int uiVao = setupUiVao();
@@ -160,10 +167,18 @@ int main() {
         GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
         geometryGenerator.startBatch();
-        geometryGenerator.drawRectangle(0, 0, 100, 100);
+        float y = 0;
+        float size = 8;
+        for (int i = 0; i < 32; ++i) {
+            geometryGenerator.drawRectangle(20, y, 20 + size, y + size);
+            y += size + 10;
+            ++size;
+        }
         Batch batch = geometryGenerator.endBatch();
 
         geometryGenerator.updateUiBuffers(uiVao);
+        geometryGenerator.reset();
+
         GL(glUseProgram(uiShader.id));
         GL(setUniformMat4(uiShader.uProjection, &projection));
         GL(glActiveTexture(GL_TEXTURE0));
