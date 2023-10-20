@@ -24,7 +24,13 @@ struct GeometryGenerator {
     void init(int vertexCapacity, int indexCapacity);
     void startBatch();
     Batch endBatch();
+    void reset();
 
     void drawRectangle(float x1, float y1, float x2, float y2);
     void drawSprite(float x1, float y1, float x2, float y2, float uvx1, float uvy1, float uvx2, float uvy2);
+
+    void updateUiBuffers(unsigned int uiVao);
 };
+
+unsigned int setupUiVao();
+

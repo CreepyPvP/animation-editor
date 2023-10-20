@@ -12,6 +12,7 @@ struct GridShader {
 
 struct UiShader {
     Program id;
+    Uniform uProjection;
 };
 
 GridShader createGridShader(std::string vert, std::string frag);

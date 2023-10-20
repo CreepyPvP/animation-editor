@@ -9,6 +9,8 @@
 
 #include "defines.hpp"
 #include "shader.hpp"
+#include "texture.hpp"
+#include "renderer.hpp"
 
 #define Vao unsigned int
 
@@ -119,6 +121,7 @@ int main() {
     GL(glEnable(GL_MULTISAMPLE));
     GL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     setupSquareVao();
+    unsigned int uiVao = setupUiVao();
 
     GridShader gridShader = createGridShader(
         "../shader/gridVert.glsl",
@@ -126,9 +129,14 @@ int main() {
     );
 
     UiShader uiShader = createUiShader(
-        "../shader/gridVert.glsl",
-        "../shader/gridFrag.glsl"
+        "../shader/uiVert.glsl",
+        "../shader/uiFrag.glsl"
     );
+
+    unsigned int texture = loadTexture("../assets/ui.png");
+
+    GeometryGenerator geometryGenerator;
+    geometryGenerator.init(4000, 4000);
 
     float delta = 0.0f;
     float lastFrame = 0.0f;
@@ -150,6 +158,17 @@ int main() {
         glm::vec2 screenDimensions(globalWindow.width, globalWindow.height);
         setUniformVec2(gridShader.uScreenDimensions, &screenDimensions);
         GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+
+        geometryGenerator.startBatch();
+        geometryGenerator.drawRectangle(0, 0, 100, 100);
+        Batch batch = geometryGenerator.endBatch();
+
+        geometryGenerator.updateUiBuffers(uiVao);
+        GL(glUseProgram(uiShader.id));
+        GL(setUniformMat4(uiShader.uProjection, &projection));
+        GL(glActiveTexture(GL_TEXTURE0));
+        GL(glBindTexture(GL_TEXTURE_2D, texture));
+        GL(glDrawElements(GL_TRIANGLES, batch.indexCount, GL_UNSIGNED_INT, (void*) batch.baseIndex));
 
         glfwSwapBuffers(globalWindow.handle);
         glfwPollEvents();

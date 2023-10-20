@@ -73,6 +73,7 @@ GridShader createGridShader(std::string vert, std::string frag) {
 UiShader createUiShader(std::string vert, std::string frag) {
     UiShader shader;
     shader.id = createShader(vert, frag);
+    shader.uProjection = glGetUniformLocation(shader.id, "projection");
     return shader;
 }
 
