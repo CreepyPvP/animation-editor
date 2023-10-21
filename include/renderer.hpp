@@ -28,6 +28,7 @@ struct GeometryGenerator {
 
     void drawRectangle(float x1, float y1, float x2, float y2);
     void drawSprite(float x1, float y1, float x2, float y2, float uvx1, float uvy1, float uvx2, float uvy2);
+    void drawString(float x1, float x2, const char* str);
 
     void updateUiBuffers(unsigned int uiVao);
 };

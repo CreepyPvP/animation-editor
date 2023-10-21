@@ -167,13 +167,7 @@ int main() {
         GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
         geometryGenerator.startBatch();
-        float y = 0;
-        float size = 8;
-        for (int i = 0; i < 32; ++i) {
-            geometryGenerator.drawRectangle(20, y, 20 + size, y + size);
-            y += size + 10;
-            ++size;
-        }
+        geometryGenerator.drawString(50, 50, "ABCDEFGHIJKLM");
         Batch batch = geometryGenerator.endBatch();
 
         geometryGenerator.updateUiBuffers(uiVao);

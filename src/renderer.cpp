@@ -3,6 +3,8 @@
 
 #include "renderer.hpp"
 #include "defines.hpp"
+#include "texture_atlas.hpp"
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
@@ -38,15 +40,15 @@ void GeometryGenerator::reset() {
     indexSprite = 0;
 }
 
-void GeometryGenerator::drawRectangle(float x1, float y1, float x2, float y2) {
+void GeometryGenerator::drawRectangle(float x, float y, float width, float height) {
     int vertex = vertexBase + vertexSprite;
     int index = indexBase + indexSprite;
 
-    // Scale with dpi factor here
-    float startX = floor(x1 + 0.5);
-    float startY = floor(y1 + 0.5);
-    float endX = floor(x2 + 0.5);
-    float endY = floor(y2 + 0.5);
+    // TODO: Scale with dpi factor here
+    float startX = floor(x + 0.5);
+    float startY = floor(y + 0.5);
+    float endX = floor(x + width + 0.5);
+    float endY = floor(y + height + 0.5);
 
     vertexBuffer[vertex + 0].x = startX;
     vertexBuffer[vertex + 0].y = endY;
@@ -74,6 +76,73 @@ void GeometryGenerator::drawRectangle(float x1, float y1, float x2, float y2) {
 
     vertexSprite += 4;
     indexSprite += 6;
+}
+
+void GeometryGenerator::drawSprite(float x, float y, float width, float height, float uvx, float uvy, float uvw, float uvh) {
+    int vertex = vertexBase + vertexSprite;
+    int index = indexBase + indexSprite;
+
+    // TODO: Scale with dpi factor here
+    float startX = floor(x + 0.5);
+    float startY = floor(y + 0.5);
+    float endX = floor(x + width + 0.5);
+    float endY = floor(y + height + 0.5);
+
+    vertexBuffer[vertex + 0].x = startX;
+    vertexBuffer[vertex + 0].y = endY;
+    vertexBuffer[vertex + 0].uvX = uvx;
+    vertexBuffer[vertex + 0].uvY = uvy + uvh;
+    vertexBuffer[vertex + 1].x = endX;
+    vertexBuffer[vertex + 1].y = endY;
+    vertexBuffer[vertex + 1].uvX = uvx + uvw;
+    vertexBuffer[vertex + 1].uvY = uvy + uvh;
+    vertexBuffer[vertex + 2].x = startX;
+    vertexBuffer[vertex + 2].y = startY;
+    vertexBuffer[vertex + 2].uvX = uvx;
+    vertexBuffer[vertex + 2].uvY = uvy;
+    vertexBuffer[vertex + 3].x = endX;
+    vertexBuffer[vertex + 3].y = startY;
+    vertexBuffer[vertex + 3].uvX = uvx + uvw;
+    vertexBuffer[vertex + 3].uvY = uvy;
+
+    indexBuffer[index + 0] = 1 + vertex;
+    indexBuffer[index + 1] = 3 + vertex;
+    indexBuffer[index + 2] = 2 + vertex;
+    indexBuffer[index + 3] = 0 + vertex;
+    indexBuffer[index + 4] = 1 + vertex;
+    indexBuffer[index + 5] = 2 + vertex;
+
+    vertexSprite += 4;
+    indexSprite += 6;
+}
+
+void GeometryGenerator::drawString(float x, float y, const char* str) {
+    const char* ptr = str;
+    const float letterSpacing = 5;
+    float xPos = x;
+    while (*ptr) {
+        int charIndex = *ptr - 65;
+        if (charIndex > 26 || charIndex < 0) {
+            return;
+        }
+
+        float uvx = (float) fontLookup[charIndex * 3] / TEXTURE_ATLAS_WIDTH;
+        float uvy = (float) fontLookup[charIndex * 3 + 1] / TEXTURE_ATLAS_HEIGHT;
+        int charWidth = fontLookup[charIndex * 3 + 2];
+        float uvw = (float) charWidth / TEXTURE_ATLAS_WIDTH;
+        float uvh = (float) FONT_HEIGHT / TEXTURE_ATLAS_HEIGHT;
+
+        drawSprite(
+            xPos, y,
+            charWidth, FONT_HEIGHT,
+            uvx, uvy,
+            uvw, uvh
+        );
+        
+        xPos += charWidth + letterSpacing;
+
+        ++ptr;
+    }
 }
 
 unsigned int setupUiVao() {
@@ -109,3 +178,4 @@ void GeometryGenerator::updateUiBuffers(unsigned int uiVao) {
     memcpy(indexBuffMap, indexBuffer, sizeof(unsigned int) * indexBase);
     GL(glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER));
 }
+
