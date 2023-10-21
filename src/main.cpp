@@ -167,7 +167,11 @@ int main() {
         GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
         geometryGenerator.startBatch();
-        geometryGenerator.drawString(50, 50, "ABCDEFGHIJKLM");
+        int y = 10;
+        for (float f = 0.5; f < 3; f += 0.1) {
+            geometryGenerator.drawBitmapString(50, y, "ABCDEFGHIJKLM", f);
+            y += 50;
+        }
         Batch batch = geometryGenerator.endBatch();
 
         geometryGenerator.updateUiBuffers(uiVao);

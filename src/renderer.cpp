@@ -116,7 +116,7 @@ void GeometryGenerator::drawSprite(float x, float y, float width, float height, 
     indexSprite += 6;
 }
 
-void GeometryGenerator::drawString(float x, float y, const char* str) {
+void GeometryGenerator::drawBitmapString(float x, float y, const char* str, float scale) {
     const char* ptr = str;
     const float letterSpacing = 5;
     float xPos = x;
@@ -134,12 +134,12 @@ void GeometryGenerator::drawString(float x, float y, const char* str) {
 
         drawSprite(
             xPos, y,
-            charWidth, FONT_HEIGHT,
+            charWidth * scale, FONT_HEIGHT * scale,
             uvx, uvy,
             uvw, uvh
         );
         
-        xPos += charWidth + letterSpacing;
+        xPos += (charWidth + letterSpacing) * scale;
 
         ++ptr;
     }
