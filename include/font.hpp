@@ -12,9 +12,15 @@ struct Glyph {
     int height;
     int left;
     int top;
-    int advance;
+    unsigned int advance;
 
     unsigned char* bitmapBuffer;
 };
 
-int setupFontAtlas(unsigned int* atlas, Glyph* glyphStore, const char* filepath);
+struct Font {
+    int atlasWidth;
+    int atlasHeight;
+    Glyph glyphs[GLYPH_COUNT];
+};
+
+int setupFontAtlas(unsigned int* atlas, Font* font, const char* filepath);

@@ -77,6 +77,13 @@ UiShader createUiShader(std::string vert, std::string frag) {
     return shader;
 }
 
+FontShader createFontShader(std::string vert, std::string frag) {
+    FontShader shader;
+    shader.id = createShader(vert, frag);
+    shader.uProjection = glGetUniformLocation(shader.id, "projection");
+    return shader;
+}
+
 void setUniformMat4(unsigned int uniformId, glm::mat4 *matrix) {
     glUniformMatrix4fv(uniformId, 1, GL_FALSE, &(*matrix)[0][0]);
 }

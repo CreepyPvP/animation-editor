@@ -11,7 +11,7 @@ static int max(int a, int b) {
     return a > b? a : b;
 }
 
-int setupFontAtlas(unsigned int* atlas, Glyph* glyphStore, const char* filepath) {
+int setupFontAtlas(unsigned int* atlas, Font* font, const char* filepath) {
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         printf("Could not init freetype library\n");
@@ -19,7 +19,7 @@ int setupFontAtlas(unsigned int* atlas, Glyph* glyphStore, const char* filepath)
     }
 
     FT_Face face;
-    if (FT_New_Face, filepath, 0, &face) {
+    if (FT_New_Face(ft, filepath, 0, &face)) {
         printf("Failed to load font: %s\n", filepath);
         return -2;
     }
@@ -35,17 +35,19 @@ int setupFontAtlas(unsigned int* atlas, Glyph* glyphStore, const char* filepath)
             continue;
         }
 
-        glyphStore[c].width = face->glyph->bitmap.width;
-        glyphStore[c].height = face->glyph->bitmap.rows;
-        glyphStore[c].left = face->glyph->bitmap_left;
-        glyphStore[c].top = face->glyph->bitmap_top;
-        glyphStore[c].advance = face->glyph->advance.x;
-        glyphStore[c].bitmapBuffer = face->glyph->bitmap.buffer;
+        font->glyphs[c].width = face->glyph->bitmap.width;
+        font->glyphs[c].height = face->glyph->bitmap.rows;
+        font->glyphs[c].left = face->glyph->bitmap_left;
+        font->glyphs[c].top = face->glyph->bitmap_top;
+        font->glyphs[c].advance = face->glyph->advance.x;
+        font->glyphs[c].bitmapBuffer = face->glyph->bitmap.buffer;
 
-        glyphStore[c].startX = totalWidth;
-        totalWidth += glyphStore[c].width + 1;
-        totalHeight = max(totalHeight, glyphStore[c].height);
+        font->glyphs[c].startX = totalWidth;
+        totalWidth += font->glyphs[c].width + 1;
+        totalHeight = max(totalHeight, font->glyphs[c].height);
     }
+    font->atlasWidth = totalWidth - 1;
+    font->atlasHeight = totalHeight;
 
     glGenTextures(1, atlas);
     glBindTexture(GL_TEXTURE_2D, *atlas);
@@ -60,9 +62,13 @@ int setupFontAtlas(unsigned int* atlas, Glyph* glyphStore, const char* filepath)
         GL_UNSIGNED_BYTE,
         NULL
     );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     for (unsigned char c = 0; c < GLYPH_COUNT; ++c) {
-        Glyph glyph = glyphStore[c];
+        Glyph glyph = font->glyphs[c];
         glTexSubImage2D(
             GL_TEXTURE_2D,
             0,
@@ -75,6 +81,9 @@ int setupFontAtlas(unsigned int* atlas, Glyph* glyphStore, const char* filepath)
             glyph.bitmapBuffer
         );
     }
+
+    FT_Done_Face(face);
+    FT_Done_FreeType(ft);
 
     return 0;
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "font.hpp"
+
 struct Vertex {
     float x;
     float y;
@@ -28,7 +30,8 @@ struct GeometryGenerator {
 
     void drawRectangle(float x, float y, float width, float height);
     void drawSprite(float x, float y, float w, float h, float uvx, float uvy, float uvw, float uvh);
-    void drawBitmapString(float x1, float x2, const char* str, float scale);
+    void drawBitmapString(float x, float y, const char* str, float scale);
+    void drawString(float x, float y, const char* str, const Font* font);
 
     void updateUiBuffers(unsigned int uiVao);
 };

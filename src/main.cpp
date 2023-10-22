@@ -141,13 +141,16 @@ int main() {
         "../shader/uiFrag.glsl"
     );
 
+    FontShader fontShader = createFontShader(
+        "../shader/fontVert.glsl", 
+        "../shader/fontFrag.glsl"
+    );
+
     unsigned int texture = loadTexture("../assets/ui.png");
 
     unsigned int fontAtlas;
-    Glyph glyphStore[GLYPH_COUNT];
-    if (setupFontAtlas(&fontAtlas, glyphStore, "../fonts/arial.ttf")) {
-        return 1;
-    }
+    Font font;
+    setupFontAtlas(&fontAtlas, &font, "../assets/fonts/EndFont.ttf");
 
     GeometryGenerator geometryGenerator;
     geometryGenerator.init(4000, 4000);
@@ -174,20 +177,18 @@ int main() {
         GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
         geometryGenerator.startBatch();
-        int y = 10;
-        for (float f = 0.5; f < 3; f += 0.1) {
-            geometryGenerator.drawBitmapString(50, y, "ABCDEFGHIJKLM", f);
-            y += 50;
-        }
+        geometryGenerator.drawString(50, 50, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &font);
+
+        geometryGenerator.drawRectangle(50, 150, 1000, 100);
         Batch batch = geometryGenerator.endBatch();
 
         geometryGenerator.updateUiBuffers(uiVao);
         geometryGenerator.reset();
 
-        GL(glUseProgram(uiShader.id));
-        GL(setUniformMat4(uiShader.uProjection, &projection));
+        GL(glUseProgram(fontShader.id));
+        GL(setUniformMat4(fontShader.uProjection, &projection));
         GL(glActiveTexture(GL_TEXTURE0));
-        GL(glBindTexture(GL_TEXTURE_2D, texture));
+        GL(glBindTexture(GL_TEXTURE_2D, fontAtlas));
         GL(glDrawElements(GL_TRIANGLES, batch.indexCount, GL_UNSIGNED_INT, (void*) batch.baseIndex));
 
         glfwSwapBuffers(globalWindow.handle);

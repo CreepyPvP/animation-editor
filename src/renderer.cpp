@@ -145,6 +145,34 @@ void GeometryGenerator::drawBitmapString(float x, float y, const char* str, floa
     }
 }
 
+void GeometryGenerator::drawString(float x, float y, const char* str, const Font* font) {
+    const char* ptr = str;
+    const float scale = 1;
+    float xPos = x;
+    while (*ptr) {
+        if (*ptr >= GLYPH_COUNT) {
+            return;
+        }
+        Glyph glyph = font->glyphs[*ptr];
+
+        float uvx = (float) glyph.startX / (float) font->atlasWidth;
+        float uvy = 0;
+        float uvw = (float) glyph.width / (float) font->atlasWidth;
+        float uvh = (float) glyph.height / (float) font->atlasHeight;
+
+        drawSprite(
+            xPos, y,
+            glyph.width, glyph.height,
+            uvx, uvy,
+            uvw, uvh
+        );
+        
+        xPos += (float) glyph.advance * scale / 64;
+
+        ++ptr;
+    }
+}
+
 unsigned int setupUiVao() {
     unsigned int vao;
     glGenVertexArrays(1, &vao);

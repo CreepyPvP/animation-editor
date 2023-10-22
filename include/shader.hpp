@@ -15,9 +15,16 @@ struct UiShader {
     Uniform uProjection;
 };
 
+struct FontShader {
+    Program id;
+    Uniform uProjection;
+};
+
 GridShader createGridShader(std::string vert, std::string frag);
 
 UiShader createUiShader(std::string vert, std::string frag);
+
+FontShader createFontShader(std::string vert, std::string frag);
 
 void setUniformMat4(unsigned int uniformId, glm::mat4* matrix);
 
