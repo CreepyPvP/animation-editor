@@ -7,14 +7,11 @@
 #include <stdio.h>
 #include FT_FREETYPE_H
 
-#define GLYPH_COUNT 128
-
-
 static int max(int a, int b) { 
     return a > b? a : b;
 }
 
-int setupFontAtlas() {
+int setupFontAtlas(unsigned int* atlas, Glyph* glyphStore, const char* filepath) {
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         printf("Could not init freetype library\n");
@@ -22,15 +19,13 @@ int setupFontAtlas() {
     }
 
     FT_Face face;
-    if (FT_New_Face(ft, "fonts/arial.ttf", 0, &face)) {
-        printf("Failed to load font\n");
+    if (FT_New_Face, filepath, 0, &face) {
+        printf("Failed to load font: %s\n", filepath);
         return -2;
     }
 
     FT_Set_Pixel_Sizes(face, 0, 48);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    Glyph glyphStore[GLYPH_COUNT];
 
     int totalWidth = 0;
     int totalHeight = 0;
@@ -52,9 +47,8 @@ int setupFontAtlas() {
         totalHeight = max(totalHeight, glyphStore[c].height);
     }
 
-    unsigned int atlas;
-    glGenTextures(1, &atlas);
-    glBindTexture(GL_TEXTURE_2D, atlas);
+    glGenTextures(1, atlas);
+    glBindTexture(GL_TEXTURE_2D, *atlas);
     glTexImage2D(
         GL_TEXTURE_2D, 
         0,

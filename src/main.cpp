@@ -11,6 +11,7 @@
 #include "shader.hpp"
 #include "texture.hpp"
 #include "renderer.hpp"
+#include "font.hpp"
 
 #define Vao unsigned int
 
@@ -141,6 +142,12 @@ int main() {
     );
 
     unsigned int texture = loadTexture("../assets/ui.png");
+
+    unsigned int fontAtlas;
+    Glyph glyphStore[GLYPH_COUNT];
+    if (setupFontAtlas(&fontAtlas, glyphStore, "../fonts/arial.ttf")) {
+        return 1;
+    }
 
     GeometryGenerator geometryGenerator;
     geometryGenerator.init(4000, 4000);

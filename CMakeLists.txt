@@ -24,7 +24,7 @@ file(GLOB_RECURSE HEADER_FILES
 IF (WIN32)
     # Windows libraries:
     find_package(OpenGL REQUIRED)
-    set(LIBS glfw opengl32 glad glm)
+    set(LIBS glfw opengl32 glad glm freetype)
 
     file(GLOB_RECURSE SOURCE_FILES 
         ${CMAKE_SOURCE_DIR}/src/*.cpp
@@ -32,7 +32,7 @@ IF (WIN32)
     )
 ELSE()
     # Linux libraries:
-    set(LIBS glfw X11 glad glm)
+    set(LIBS glfw X11 glad glm freetype)
 
     file(GLOB_RECURSE SOURCE_FILES 
         ${CMAKE_SOURCE_DIR}/src/*.cpp

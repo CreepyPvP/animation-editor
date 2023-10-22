@@ -1,5 +1,8 @@
 #pragma once
 
+#define GLYPH_COUNT 128
+
+
 struct Glyph { 
     // glyph coordinates
     
@@ -13,3 +16,5 @@ struct Glyph {
 
     unsigned char* bitmapBuffer;
 };
+
+int setupFontAtlas(unsigned int* atlas, Glyph* glyphStore, const char* filepath);
