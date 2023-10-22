@@ -177,7 +177,7 @@ int main() {
         GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
         geometryGenerator.startBatch();
-        geometryGenerator.drawString(50, 50, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &font);
+        geometryGenerator.drawString(50, 50, "Johannes stinkt", &font);
 
         geometryGenerator.drawRectangle(50, 150, 1000, 100);
         Batch batch = geometryGenerator.endBatch();

@@ -3,6 +3,8 @@
 
 #include "font.hpp"
 
+#include <string.h>
+#include <stdlib.h>
 #include <ft2build.h>
 #include <stdio.h>
 #include FT_FREETYPE_H
@@ -35,18 +37,24 @@ int setupFontAtlas(unsigned int* atlas, Font* font, const char* filepath) {
             continue;
         }
 
-        font->glyphs[c].width = face->glyph->bitmap.width;
-        font->glyphs[c].height = face->glyph->bitmap.rows;
+        int width = face->glyph->bitmap.width;
+        int height = face->glyph->bitmap.rows;
+        font->glyphs[c].width = width;
+        font->glyphs[c].height = height;
         font->glyphs[c].left = face->glyph->bitmap_left;
         font->glyphs[c].top = face->glyph->bitmap_top;
         font->glyphs[c].advance = face->glyph->advance.x;
-        font->glyphs[c].bitmapBuffer = face->glyph->bitmap.buffer;
+
+        int bufferSize = sizeof(unsigned char) * width * height;
+        unsigned char* buffer = (unsigned char*) malloc(bufferSize);
+        font->glyphs[c].bitmapBuffer = buffer;
+        memcpy(buffer, face->glyph->bitmap.buffer, bufferSize);
 
         font->glyphs[c].startX = totalWidth;
-        totalWidth += font->glyphs[c].width + 1;
+        totalWidth += font->glyphs[c].width;
         totalHeight = max(totalHeight, font->glyphs[c].height);
     }
-    font->atlasWidth = totalWidth - 1;
+    font->atlasWidth = totalWidth;
     font->atlasHeight = totalHeight;
 
     glGenTextures(1, atlas);
@@ -55,7 +63,7 @@ int setupFontAtlas(unsigned int* atlas, Font* font, const char* filepath) {
         GL_TEXTURE_2D, 
         0,
         GL_RED,
-        totalWidth - 1,
+        totalWidth,
         totalHeight,
         0,
         GL_RED,
