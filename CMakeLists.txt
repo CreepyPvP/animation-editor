@@ -12,6 +12,7 @@ set(CMAKE_BUILD_TYPE Debug)
 set(GLFW_ROOT_DIR external/glfw)
 set(GLAD_ROOT_DIR external/glad)
 set(GLM_ROOT_DIR external/glm)
+set(FREETYPE_ROOT_DIR external/freetype)
 
 # Add all Header Files
 file(GLOB_RECURSE HEADER_FILES 
@@ -45,6 +46,7 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 add_subdirectory(${GLFW_ROOT_DIR})
 add_subdirectory(${GLAD_ROOT_DIR})
 add_subdirectory(${GLM_ROOT_DIR})
+add_subdirectory(${FREETYPE_ROOT_DIR})
 
 # Add the Include Directories for the Libraries / Files
 #Used for adding #include into the cpp files
@@ -55,6 +57,7 @@ target_include_directories(${PROJECT_NAME}
 	PUBLIC ${GLFW_ROOT_DIR}/include
     PUBLIC ${GLAD_ROOT_DIR}/include/glad
     PUBLIC ${GLM_ROOT_DIR}/include
+    PUBLIC ${FREETYPE_ROOT_DIR}/include
     PUBLIC include
 )
 
@@ -62,6 +65,7 @@ target_link_directories(${PROJECT_NAME}
 	PRIVATE ${GLFW_ROOT_DIR}/src
 	PRIVATE ${GLAD_ROOT_DIR}/src
     PRIVATE ${GLM_ROOT_DIR}/src
+    PRIVATE ${FREETYPE_ROOT_DIR}/src
 )
 
 # Add the Libs to the Linker for the Project
