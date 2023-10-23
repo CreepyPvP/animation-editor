@@ -12,6 +12,8 @@
 #include "texture.hpp"
 #include "renderer.hpp"
 #include "font.hpp"
+#include "nine_slice.hpp"
+#include "texture_atlas.hpp"
 
 #define Vao unsigned int
 
@@ -177,12 +179,12 @@ int main() {
         GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
         geometryGenerator.startBatch();
-        int y = 20;
-        for (float s = 0.1; s < 2.5; s += 0.1) {
-            geometryGenerator.drawString(100, y, "Test test.. !! #", &font, s);
-            y += 100 * s;
-        }
-        Batch batch = geometryGenerator.endBatch();
+        geometryGenerator.drawString(100, 100, "Test test.. !! #", &font, 1);
+        Batch fontBatch = geometryGenerator.endBatch();
+
+        geometryGenerator.startBatch();
+        geometryGenerator.drawNineSlice(200, 200, 100, 100, getButton());
+        Batch nineSliceBatch = geometryGenerator.endBatch();
 
         geometryGenerator.updateUiBuffers(uiVao);
         geometryGenerator.reset();
@@ -191,7 +193,7 @@ int main() {
         GL(setUniformMat4(fontShader.uProjection, &projection));
         GL(glActiveTexture(GL_TEXTURE0));
         GL(glBindTexture(GL_TEXTURE_2D, fontAtlas));
-        GL(glDrawElements(GL_TRIANGLES, batch.indexCount, GL_UNSIGNED_INT, (void*) batch.baseIndex));
+        GL(glDrawElements(GL_TRIANGLES, fontBatch.indexCount, GL_UNSIGNED_INT, (void*) fontBatch.baseIndex));
 
         glfwSwapBuffers(globalWindow.handle);
         glfwPollEvents();

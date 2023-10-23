@@ -116,42 +116,10 @@ void GeometryGenerator::drawSprite(float x, float y, float width, float height, 
     indexSprite += 6;
 }
 
-void GeometryGenerator::drawBitmapString(float x, float y, const char* str, float scale) {
-    const char* ptr = str;
-    const float letterSpacing = 5;
-    float xPos = x;
-    while (*ptr) {
-        int charIndex = *ptr - 65;
-        if (charIndex > 26 || charIndex < 0) {
-            return;
-        }
-
-        float uvx = (float) fontLookup[charIndex * 3] / TEXTURE_ATLAS_WIDTH;
-        float uvy = (float) fontLookup[charIndex * 3 + 1] / TEXTURE_ATLAS_HEIGHT;
-        int charWidth = fontLookup[charIndex * 3 + 2];
-        float uvw = (float) charWidth / TEXTURE_ATLAS_WIDTH;
-        float uvh = (float) FONT_HEIGHT / TEXTURE_ATLAS_HEIGHT;
-
-        drawSprite(
-            xPos, y,
-            charWidth * scale, FONT_HEIGHT * scale,
-            uvx, uvy,
-            uvw, uvh
-        );
-        
-        xPos += (charWidth + letterSpacing) * scale;
-
-        ++ptr;
-    }
-}
-
 void GeometryGenerator::drawString(float x, float y, const char* str, const Font* font, float scale) {
     const char* ptr = str;
     float xPos = x;
     while (*ptr) {
-        if (*ptr >= GLYPH_COUNT) {
-            return;
-        }
         Glyph glyph = font->glyphs[*ptr];
 
         float uvx = (float) glyph.startX / (float) font->atlasWidth;
@@ -170,6 +138,44 @@ void GeometryGenerator::drawString(float x, float y, const char* str, const Font
 
         ++ptr;
     }
+}
+
+void GeometryGenerator::drawNineSlice(float x, float y, float width, float height, const NineSlice* nineSlice) {
+    int vertex = vertexBase + vertexSprite;
+    int index = indexBase + indexSprite;
+
+    // TODO: Scale with dpi factor here
+    int startX = x + 0.5;
+    int startY = y + 0.5;
+    int endX = x + width + 0.5;
+    int endY = y + height + 0.5;
+
+    vertexBuffer[vertex + 0].x = startX;
+    vertexBuffer[vertex + 0].y = endY;
+    vertexBuffer[vertex + 0].uvX = 0;
+    vertexBuffer[vertex + 0].uvY = 1;
+    vertexBuffer[vertex + 1].x = endX;
+    vertexBuffer[vertex + 1].y = endY;
+    vertexBuffer[vertex + 1].uvX = 1;
+    vertexBuffer[vertex + 1].uvY = 1;
+    vertexBuffer[vertex + 2].x = startX;
+    vertexBuffer[vertex + 2].y = startY;
+    vertexBuffer[vertex + 2].uvX = 0;
+    vertexBuffer[vertex + 2].uvY = 0;
+    vertexBuffer[vertex + 3].x = endX;
+    vertexBuffer[vertex + 3].y = startY;
+    vertexBuffer[vertex + 3].uvX = 1;
+    vertexBuffer[vertex + 3].uvY = 0;
+
+    indexBuffer[index + 0] = 1 + vertex;
+    indexBuffer[index + 1] = 3 + vertex;
+    indexBuffer[index + 2] = 2 + vertex;
+    indexBuffer[index + 3] = 0 + vertex;
+    indexBuffer[index + 4] = 1 + vertex;
+    indexBuffer[index + 5] = 2 + vertex;
+
+    vertexSprite += 4;
+    indexSprite += 6;
 }
 
 unsigned int setupUiVao() {
