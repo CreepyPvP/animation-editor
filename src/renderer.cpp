@@ -145,9 +145,8 @@ void GeometryGenerator::drawBitmapString(float x, float y, const char* str, floa
     }
 }
 
-void GeometryGenerator::drawString(float x, float y, const char* str, const Font* font) {
+void GeometryGenerator::drawString(float x, float y, const char* str, const Font* font, float scale) {
     const char* ptr = str;
-    const float scale = 1;
     float xPos = x;
     while (*ptr) {
         if (*ptr >= GLYPH_COUNT) {
@@ -162,7 +161,7 @@ void GeometryGenerator::drawString(float x, float y, const char* str, const Font
 
         drawSprite(
             xPos, y,
-            glyph.width, glyph.height,
+            glyph.width * scale, glyph.height * scale,
             uvx, uvy,
             uvw, uvh
         );
