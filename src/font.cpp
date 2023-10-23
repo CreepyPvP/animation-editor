@@ -53,6 +53,10 @@ int setupFontAtlas(unsigned int* atlas, Font* font, const char* filepath) {
         font->glyphs[c].startX = totalWidth;
         totalWidth += font->glyphs[c].width;
         totalHeight = max(totalHeight, font->glyphs[c].height);
+        // extruding glyphs to prevent them from blending
+        if (width != 0 && height != 0 ) {
+            totalWidth += 1;
+        }
     }
     font->atlasWidth = totalWidth;
     font->atlasHeight = totalHeight;
@@ -90,8 +94,12 @@ int setupFontAtlas(unsigned int* atlas, Font* font, const char* filepath) {
         );
     }
 
+    // free all resources
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
+    for (unsigned char c = 0; c < GLYPH_COUNT; ++c) {
+        free(font->glyphs[c].bitmapBuffer);
+    }
 
     return 0;
 }

@@ -179,8 +179,8 @@ int main() {
         geometryGenerator.startBatch();
         int y = 20;
         for (float s = 0.1; s < 2.5; s += 0.1) {
-            geometryGenerator.drawString(50, y, "Test test.. !! #", &font, s);
-            y += 50 * s;
+            geometryGenerator.drawString(100, y, "Test test.. !! #", &font, s);
+            y += 100 * s;
         }
         Batch batch = geometryGenerator.endBatch();
 

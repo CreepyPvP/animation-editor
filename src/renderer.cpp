@@ -160,7 +160,7 @@ void GeometryGenerator::drawString(float x, float y, const char* str, const Font
         float uvh = (float) glyph.height / (float) font->atlasHeight;
 
         drawSprite(
-            xPos, y,
+            xPos + glyph.left * scale, y - glyph.top * scale,
             glyph.width * scale, glyph.height * scale,
             uvx, uvy,
             uvw, uvh
