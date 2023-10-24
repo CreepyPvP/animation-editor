@@ -146,72 +146,85 @@ void GeometryGenerator::drawString(float x, float y, const char* str, const Font
     }
 }
 
-void GeometryGenerator::drawNineSlice(float x, float y, float width, float height, const NineSlice* nineSlice) {
+void GeometryGenerator::drawNineSlice(float x, float y, float width, float height, const NineSlice* nineSlice, float scale) {
+    // Note: Scale does not influence actual screen size.
     // TODO: Scale with dpi factor here
     // TODO: Check for fill strategy
-    int startX = x + 0.5;
-    int startY = y + 0.5;
-    int endX = x + width + 0.5;
-    int endY = y + height + 0.5;
+    const int startX = x + 0.5;
+    const int startY = y + 0.5;
+    const int endX = x + width + 0.5;
+    const int endY = y + height + 0.5;
+    const float uvScale = 1 / scale;
 
-    assert(endX - startX >= nineSlice->widthLeft + nineSlice->widthRight);
-    assert(endY - startY >= nineSlice->heightTop + nineSlice->heightBot);
+    int widthLeft = nineSlice->widthLeft * scale + 0.5;
+    int widthMiddle = nineSlice->widthMiddle * scale + 0.5;
+    int widthRight = nineSlice->widthRight * scale + 0.5;
+
+    int heightTop = nineSlice->heightTop * scale + 0.5;
+    int heightMiddle = nineSlice->heightMiddle * scale + 0.5;
+    int heightBot = nineSlice->heightBot * scale + 0.5;
+
+    assert(endX - startX >= widthLeft + widthRight);
+    assert(endY - startY >= heightTop + heightBot);
 
     // Top Left
     pixelSprite(
         startX, 
         startY, 
-        nineSlice->widthLeft, 
-        nineSlice->heightTop, 
+        widthLeft, 
+        heightTop, 
         nineSlice->startX, 
-        nineSlice->startY
+        nineSlice->startY,
+        uvScale
     );
     // Top Middle
     int dx = 0;
-    int distanceToLeft = width - nineSlice->widthLeft - nineSlice->widthRight - dx;
+    int distanceToLeft = width - widthLeft - widthRight - dx;
     while (distanceToLeft > 0) {
         pixelSprite(
-            startX + dx + nineSlice->widthLeft, 
+            startX + dx + widthLeft, 
             startY,
-            min(nineSlice->widthMiddle, distanceToLeft), 
-            nineSlice->heightMiddle, 
+            min(widthMiddle, distanceToLeft), 
+            heightMiddle, 
             nineSlice->startX + nineSlice->widthRight, 
-            nineSlice->startY
+            nineSlice->startY,
+            uvScale
         );
 
-        dx += nineSlice->widthMiddle;
-        distanceToLeft = width - nineSlice->widthLeft - nineSlice->widthRight - dx;
+        dx += widthMiddle;
+        distanceToLeft = width - widthLeft - widthRight - dx;
     }
     // Top right
     pixelSprite(
-        startX + width - nineSlice->widthRight, 
+        startX + width - widthRight, 
         startY, 
-        nineSlice->widthRight, 
-        nineSlice->heightTop, 
+        widthRight, 
+        heightTop, 
         nineSlice->startX + nineSlice->widthLeft + nineSlice->widthMiddle, 
-        nineSlice->startY
+        nineSlice->startY,
+        uvScale
     );
 }
 
-void GeometryGenerator::pixelSprite(int x, int y, int width, int height, int uvx, int uvy) {
+void GeometryGenerator::pixelSprite(int x, int y, int width, int height, int uvx, int uvy, float uvScale) {
     int vertex = vertexBase + vertexSprite;
     int index = indexBase + indexSprite;
 
     vertexBuffer[vertex + 0].x = x;
     vertexBuffer[vertex + 0].y = y + height;
     vertexBuffer[vertex + 0].uvX = (float) uvx / TEXTURE_ATLAS_WIDTH;
-    vertexBuffer[vertex + 0].uvY = (float) (uvy + height) / TEXTURE_ATLAS_HEIGHT;
+    vertexBuffer[vertex + 0].uvY = (float) (uvy + height * uvScale) / TEXTURE_ATLAS_HEIGHT;
     vertexBuffer[vertex + 1].x = x + width;
     vertexBuffer[vertex + 1].y = y + height;
-    vertexBuffer[vertex + 1].uvX = (float) (uvx + width) / TEXTURE_ATLAS_WIDTH;
-    vertexBuffer[vertex + 1].uvY = (float) (uvy + height) / TEXTURE_ATLAS_HEIGHT;
+    vertexBuffer[vertex + 1].uvX = (float) (uvx + width * uvScale) / TEXTURE_ATLAS_WIDTH;
+    vertexBuffer[vertex + 1].uvY = (float) (uvy + height * uvScale) / TEXTURE_ATLAS_HEIGHT;
     vertexBuffer[vertex + 2].x = x;
     vertexBuffer[vertex + 2].y = y;
     vertexBuffer[vertex + 2].uvX = (float) uvx / TEXTURE_ATLAS_WIDTH;
     vertexBuffer[vertex + 2].uvY = (float) uvy / TEXTURE_ATLAS_HEIGHT;
     vertexBuffer[vertex + 3].x = x + width;
     vertexBuffer[vertex + 3].y = y;
-    vertexBuffer[vertex + 3].uvX = (float) (uvx + width) / TEXTURE_ATLAS_WIDTH;
+    vertexBuffer[vertex + 3].uvX = (float) (uvx + width * uvScale) / TEXTURE_ATLAS_WIDTH;
     vertexBuffer[vertex + 3].uvY = (float) uvy / TEXTURE_ATLAS_HEIGHT;
 
     indexBuffer[index + 0] = 1 + vertex;

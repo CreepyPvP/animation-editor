@@ -183,8 +183,8 @@ int main() {
         Batch fontBatch = geometryGenerator.endBatch();
 
         geometryGenerator.startBatch();
-        geometryGenerator.drawNineSlice(200, 200, 100, 100, getButton());
-        geometryGenerator.drawNineSlice(200, 250, 200, 100, getButton());
+        geometryGenerator.drawNineSlice(200, 200, 200, 200, getButton(), 4);
+        geometryGenerator.drawNineSlice(200, 400, 200, 100, getButton(), 1);
         Batch nineSliceBatch = geometryGenerator.endBatch();
 
         geometryGenerator.updateUiBuffers(uiVao);
