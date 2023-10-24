@@ -193,7 +193,23 @@ int main() {
         GL(setUniformMat4(fontShader.uProjection, &projection));
         GL(glActiveTexture(GL_TEXTURE0));
         GL(glBindTexture(GL_TEXTURE_2D, fontAtlas));
-        GL(glDrawElements(GL_TRIANGLES, fontBatch.indexCount, GL_UNSIGNED_INT, (void*) fontBatch.baseIndex));
+        GL(glDrawElements(
+            GL_TRIANGLES, 
+            fontBatch.indexCount, 
+            GL_UNSIGNED_INT, 
+            (void*) (fontBatch.baseIndex * sizeof(unsigned int))
+        ));
+
+        GL(glUseProgram(uiShader.id));
+        GL(setUniformMat4(uiShader.uProjection, &projection));
+        GL(glActiveTexture(GL_TEXTURE0));
+        GL(glBindTexture(GL_TEXTURE_2D, texture));
+        GL(glDrawElements(
+            GL_TRIANGLES, 
+            nineSliceBatch.indexCount, 
+            GL_UNSIGNED_INT, 
+            (void*) (nineSliceBatch.baseIndex * sizeof(unsigned int))
+        ));
 
         glfwSwapBuffers(globalWindow.handle);
         glfwPollEvents();

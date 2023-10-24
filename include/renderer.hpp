@@ -34,6 +34,8 @@ struct GeometryGenerator {
     void drawString(float x, float y, const char* str, const Font* font, float scale);
     void drawNineSlice(float x, float y, float width, float height, const NineSlice* nineSlice);
 
+    void pixelSprite(int x, int y, int width, int height, int uvx, int uvy);
+
     void updateUiBuffers(unsigned int uiVao);
 };
 
