@@ -143,6 +143,7 @@ void GeometryGenerator::drawString(float x, float y, const char* str, const Font
 
 void GeometryGenerator::drawNineSlice(float x, float y, float width, float height, const NineSlice* nineSlice) {
     // TODO: Scale with dpi factor here
+    // TODO: Check for fill strategy
     int startX = x + 0.5;
     int startY = y + 0.5;
     int endX = x + width + 0.5;
@@ -151,11 +152,25 @@ void GeometryGenerator::drawNineSlice(float x, float y, float width, float heigh
     assert(endX - startX >= nineSlice->widthLeft + nineSlice->widthRight);
     assert(endY - startY >= nineSlice->heightTop + nineSlice->heightBot);
 
+    // Top Left
     pixelSprite(
         startX, 
         startY, 
         nineSlice->widthLeft, 
         nineSlice->heightTop, 
+        nineSlice->startX, 
+        nineSlice->startY
+    );
+    // Top Middle
+    int cx = startX;
+    while (cx < startX + nineSlice->widthLeft + nineSlice->widthMiddle) {
+
+    }
+    pixelSprite(
+        startX + nineSlice->widthLeft, 
+        startY + nineSlice->heightTop, 
+        nineSlice->widthMiddle, 
+        nineSlice->, 
         nineSlice->startX, 
         nineSlice->startY
     );
