@@ -147,9 +147,10 @@ void GeometryGenerator::drawString(float x, float y, const char* str, const Font
 }
 
 void GeometryGenerator::drawNineSlice(float x, float y, float width, float height, const NineSlice* nineSlice, float scale) {
-    // Note: Scale does not influence actual screen size.
     // TODO: Scale with dpi factor here
     // TODO: Check for fill strategy
+    // IMPORTANT: Scale does not influence actual screen size.
+    // IMPORTANT: "widthMiddle" and "heightMiddle" are not the actual width and height of the middle section!
     const int startX = x + 0.5;
     const int startY = y + 0.5;
     const int endX = x + width + 0.5;
@@ -205,41 +206,88 @@ void GeometryGenerator::drawNineSlice(float x, float y, float width, float heigh
         uvScale
     );
 
-    // Middle Left
+    int dy = 0;
+    int distanceToBot = height - heightTop - heightBot - dy;
+    while (distanceToBot > 0) {
+        int currentHeight = min(distanceToBot, heightMiddle);
+
+        // Middle Left
+        pixelSprite(
+            startX, 
+            startY + heightTop + dy, 
+            widthLeft, 
+            currentHeight, 
+            nineSlice->startX, 
+            nineSlice->startY + nineSlice->heightTop,
+            uvScale
+        );
+        // Middle Middle
+        dx = 0;
+        distanceToLeft = width - widthLeft - widthRight - dx;
+        while (distanceToLeft > 0) {
+            pixelSprite(
+                startX + dx + widthLeft, 
+                startY + heightTop + dy,
+                min(widthMiddle, distanceToLeft), 
+                currentHeight, 
+                nineSlice->startX + nineSlice->widthRight, 
+                nineSlice->startY + nineSlice->heightTop,
+                uvScale
+            );
+
+            dx += widthMiddle;
+            distanceToLeft = width - widthLeft - widthRight - dx;
+        }
+        // Middle right
+        pixelSprite(
+            startX + width - widthRight, 
+            startY + heightTop + dy, 
+            widthRight, 
+            currentHeight, 
+            nineSlice->startX + nineSlice->widthLeft + nineSlice->widthMiddle, 
+            nineSlice->startY + nineSlice->heightTop,
+            uvScale
+        );
+
+        dy += heightMiddle;
+        distanceToBot = height - heightTop - heightBot - dy;
+    }
+
+    // Bot Left
     pixelSprite(
         startX, 
-        startY + heightTop, 
+        startY + height - heightBot, 
         widthLeft, 
-        heightMiddle, 
+        heightBot, 
         nineSlice->startX, 
-        nineSlice->startY + nineSlice->heightTop,
+        nineSlice->startY + nineSlice->heightTop + nineSlice->heightMiddle,
         uvScale
     );
-    // Middle Middle
+    // Bot Middle
     dx = 0;
     distanceToLeft = width - widthLeft - widthRight - dx;
     while (distanceToLeft > 0) {
         pixelSprite(
             startX + dx + widthLeft, 
-            startY + heightTop,
+            startY + height - heightBot,
             min(widthMiddle, distanceToLeft), 
-            heightMiddle, 
+            heightBot, 
             nineSlice->startX + nineSlice->widthRight, 
-            nineSlice->startY + nineSlice->heightTop,
+            nineSlice->startY + nineSlice->heightTop + nineSlice->heightMiddle,
             uvScale
         );
 
         dx += widthMiddle;
         distanceToLeft = width - widthLeft - widthRight - dx;
     }
-    // Middle right
+    // Bot right
     pixelSprite(
         startX + width - widthRight, 
-        startY + heightTop, 
+        startY + height - heightBot, 
         widthRight, 
-        heightMiddle, 
+        heightBot, 
         nineSlice->startX + nineSlice->widthLeft + nineSlice->widthMiddle, 
-        nineSlice->startY + nineSlice->heightTop,
+        nineSlice->startY + nineSlice->heightTop + nineSlice->heightMiddle,
         uvScale
     );
 }
