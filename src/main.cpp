@@ -184,6 +184,7 @@ int main() {
 
         geometryGenerator.startBatch();
         geometryGenerator.drawNineSlice(200, 200, 100, 100, getButton());
+        geometryGenerator.drawNineSlice(200, 250, 200, 100, getButton());
         Batch nineSliceBatch = geometryGenerator.endBatch();
 
         geometryGenerator.updateUiBuffers(uiVao);

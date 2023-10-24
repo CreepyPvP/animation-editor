@@ -13,6 +13,11 @@
 #define VERTEX_BUFFER_CAPACITY 4000 
 #define INDEX_BUFFER_CAPACITY 4000 
 
+
+static int min(int a, int b) {
+    return a < b ? a : b;
+}
+
 void GeometryGenerator::init(int vertices, int indices) {
     vertexBuffer = (Vertex*) malloc(sizeof(Vertex) * vertices);
     indexBuffer = (unsigned int*) malloc(sizeof(unsigned int) * indices);
@@ -162,16 +167,28 @@ void GeometryGenerator::drawNineSlice(float x, float y, float width, float heigh
         nineSlice->startY
     );
     // Top Middle
-    int cx = startX;
-    while (cx < startX + nineSlice->widthLeft + nineSlice->widthMiddle) {
+    int dx = 0;
+    int distanceToLeft = width - nineSlice->widthLeft - nineSlice->widthRight - dx;
+    while (distanceToLeft > 0) {
+        pixelSprite(
+            startX + dx + nineSlice->widthLeft, 
+            startY,
+            min(nineSlice->widthMiddle, distanceToLeft), 
+            nineSlice->heightMiddle, 
+            nineSlice->startX + nineSlice->widthRight, 
+            nineSlice->startY
+        );
 
+        dx += nineSlice->widthMiddle;
+        distanceToLeft = width - nineSlice->widthLeft - nineSlice->widthRight - dx;
     }
+    // Top right
     pixelSprite(
-        startX + nineSlice->widthLeft, 
-        startY + nineSlice->heightTop, 
-        nineSlice->widthMiddle, 
-        nineSlice->, 
-        nineSlice->startX, 
+        startX + width - nineSlice->widthRight, 
+        startY, 
+        nineSlice->widthRight, 
+        nineSlice->heightTop, 
+        nineSlice->startX + nineSlice->widthLeft + nineSlice->widthMiddle, 
         nineSlice->startY
     );
 }
