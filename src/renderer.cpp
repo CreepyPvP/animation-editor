@@ -185,7 +185,7 @@ void GeometryGenerator::drawNineSlice(float x, float y, float width, float heigh
             startX + dx + widthLeft, 
             startY,
             min(widthMiddle, distanceToLeft), 
-            heightMiddle, 
+            heightTop, 
             nineSlice->startX + nineSlice->widthRight, 
             nineSlice->startY,
             uvScale
@@ -202,6 +202,44 @@ void GeometryGenerator::drawNineSlice(float x, float y, float width, float heigh
         heightTop, 
         nineSlice->startX + nineSlice->widthLeft + nineSlice->widthMiddle, 
         nineSlice->startY,
+        uvScale
+    );
+
+    // Middle Left
+    pixelSprite(
+        startX, 
+        startY + heightTop, 
+        widthLeft, 
+        heightMiddle, 
+        nineSlice->startX, 
+        nineSlice->startY + nineSlice->heightTop,
+        uvScale
+    );
+    // Middle Middle
+    dx = 0;
+    distanceToLeft = width - widthLeft - widthRight - dx;
+    while (distanceToLeft > 0) {
+        pixelSprite(
+            startX + dx + widthLeft, 
+            startY + heightTop,
+            min(widthMiddle, distanceToLeft), 
+            heightMiddle, 
+            nineSlice->startX + nineSlice->widthRight, 
+            nineSlice->startY + nineSlice->heightTop,
+            uvScale
+        );
+
+        dx += widthMiddle;
+        distanceToLeft = width - widthLeft - widthRight - dx;
+    }
+    // Middle right
+    pixelSprite(
+        startX + width - widthRight, 
+        startY + heightTop, 
+        widthRight, 
+        heightMiddle, 
+        nineSlice->startX + nineSlice->widthLeft + nineSlice->widthMiddle, 
+        nineSlice->startY + nineSlice->heightTop,
         uvScale
     );
 }
