@@ -1,6 +1,6 @@
 #pragma once
 
-#include "renderer.hpp"
+#include "geometry_generator.hpp"
 
 #define MAX_UI_LAYER 10
 #define MOUSE_JUST_PRESSED 1 << 0

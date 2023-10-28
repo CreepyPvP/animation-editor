@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "renderer.hpp"
+#include "geometry_generator.hpp"
 #include "defines.hpp"
 #include "texture_atlas.hpp"
 #include <stdio.h>

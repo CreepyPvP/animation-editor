@@ -10,7 +10,7 @@
 #include "defines.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
-#include "renderer.hpp"
+#include "geometry_generator.hpp"
 #include "font.hpp"
 #include "nine_slice.hpp"
 #include "texture_atlas.hpp"
