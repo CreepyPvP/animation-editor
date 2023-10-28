@@ -1,4 +1,5 @@
 #include "ui.hpp"
+#include "nine_slice.hpp"
 #include "texture_atlas.hpp"
 #include <assert.h>
 
@@ -29,13 +30,39 @@ void endContainer(int id, UiContext* ctx) {
     ctx->currentStackDepth--;
 }
 
-bool button(float x, float y, int id, UiContext* context, Batch* batch) {
-    const int width = 100;
-    const int height = 100;
+bool button(float x, float y, float width, float height, int id, UiContext* context, Batch* batch) {
+    if (context->mouseX > x &&
+        context->mouseX < x + width &&
+        context->mouseY > y &&
+        context->mouseY < y + height) {
+        context->hot = id;
+
+        if (context->mouseFlags & MOUSE_JUST_PRESSED) {
+            context->active = id;
+        }
+    } else {
+        if (context->active == id) {
+            context->active = -1;
+        }
+    }
+
+
+    const NineSlice* model = getButton();
+    bool value = false;
+    if (context->hot == id) {
+        model = getButtonHovered();
+    }
+    if (context->active == id) {
+        model = getButtonPressed();
+        if (context->mouseFlags & MOUSE_JUST_RELEASED) {
+            value = true;
+            context->active = -1;
+        }
+    }
 
     context->geometry->startBatch();
-    context->geometry->drawNineSlice(x, y, width, height, getButton(), 8);
+    context->geometry->drawNineSlice(x, y, width, height, model, 8);
     *batch = context->geometry->endBatch();
 
-    return false;
+    return value;
 }

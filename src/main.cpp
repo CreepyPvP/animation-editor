@@ -165,14 +165,14 @@ int main() {
 
     GeometryGenerator geometryGenerator;
     geometryGenerator.init(4000, 4000);
+    context.geometry = &geometryGenerator;
+    context.active = -1;
 
     float delta = 0.0f;
     float lastFrame = 0.0f;
+    int mouseState = GLFW_RELEASE;
     GL(glClearColor(0.1, 0.1, 0.1, 1));
 
-    context.hot = -1;
-    context.active = -1;
-    context.geometry = &geometryGenerator;
 
     while (!glfwWindowShouldClose(globalWindow.handle)) {
         if (glfwGetKey(globalWindow.handle, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -182,6 +182,18 @@ int main() {
         float currentFrame = glfwGetTime();
         delta = currentFrame - lastFrame;
         lastFrame = currentFrame;
+
+        context.hot = -1;
+        int newMouseState = glfwGetMouseButton(globalWindow.handle, GLFW_MOUSE_BUTTON_LEFT);
+        context.mouseFlags = 0;
+        if (mouseState != newMouseState) {
+            mouseState = newMouseState;
+            if (mouseState == GLFW_PRESS) {
+                context.mouseFlags |= MOUSE_JUST_PRESSED;
+            } else {
+                context.mouseFlags |= MOUSE_JUST_RELEASED;
+            }
+        }
         
         GL(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -196,7 +208,7 @@ int main() {
         Batch fontBatch = geometryGenerator.endBatch();
 
         Batch buttonBatch;
-        bool clicked = button(200, 200, 1, &context, &buttonBatch);
+        bool clicked = button(200, 200, 150, 100, 1, &context, &buttonBatch);
         if (clicked) {
             printf("clicked button\n");
         }
