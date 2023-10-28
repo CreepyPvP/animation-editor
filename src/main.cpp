@@ -14,6 +14,7 @@
 #include "font.hpp"
 #include "nine_slice.hpp"
 #include "texture_atlas.hpp"
+#include "ui.hpp"
 
 #define Vao unsigned int
 
@@ -27,6 +28,8 @@ static Window globalWindow;
 static Vao squareVao;
 
 static glm::mat4 projection;
+
+static UiContext context;
 
 static void updateViewport(int width, int height) {
     glViewport(0, 0, width, height);
@@ -51,6 +54,11 @@ static void frameBufferResizeCallback(GLFWwindow *window, int width, int height)
     updateProjection();
 }
 
+static void mouseCallback(GLFWwindow* window, double posX, double posY) {
+    context.mouseX = posX;
+    context.mouseY = posY;
+}
+
 static void initWindow() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -72,6 +80,7 @@ static void initWindow() {
     }
 
     glfwSetFramebufferSizeCallback(globalWindow.handle, frameBufferResizeCallback);
+    glfwSetCursorPosCallback(globalWindow.handle, mouseCallback);
     glfwMakeContextCurrent(globalWindow.handle);
 
     // int fbW, fbH;
@@ -161,6 +170,10 @@ int main() {
     float lastFrame = 0.0f;
     GL(glClearColor(0.1, 0.1, 0.1, 1));
 
+    context.hot = -1;
+    context.active = -1;
+    context.geometry = &geometryGenerator;
+
     while (!glfwWindowShouldClose(globalWindow.handle)) {
         if (glfwGetKey(globalWindow.handle, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(globalWindow.handle, true);
@@ -182,9 +195,11 @@ int main() {
         geometryGenerator.drawString(100, 100, "Test test.. !! #", &font, 1);
         Batch fontBatch = geometryGenerator.endBatch();
 
-        geometryGenerator.startBatch();
-        geometryGenerator.drawNineSlice(200, 200, 400, 400, getButton(), 4);
-        Batch nineSliceBatch = geometryGenerator.endBatch();
+        Batch buttonBatch;
+        bool clicked = button(200, 200, 1, &context, &buttonBatch);
+        if (clicked) {
+            printf("clicked button\n");
+        }
 
         geometryGenerator.updateUiBuffers(uiVao);
         geometryGenerator.reset();
@@ -206,9 +221,9 @@ int main() {
         GL(glBindTexture(GL_TEXTURE_2D, texture));
         GL(glDrawElements(
             GL_TRIANGLES, 
-            nineSliceBatch.indexCount, 
+            buttonBatch.indexCount, 
             GL_UNSIGNED_INT, 
-            (void*) (nineSliceBatch.baseIndex * sizeof(unsigned int))
+            (void*) (buttonBatch.baseIndex * sizeof(unsigned int))
         ));
 
         glfwSwapBuffers(globalWindow.handle);
