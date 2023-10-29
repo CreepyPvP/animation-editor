@@ -30,7 +30,7 @@ void endContainer(int id, UiContext* ctx) {
     ctx->currentStackDepth--;
 }
 
-bool button(float x, float y, float width, float height, int id, UiContext* context, Batch* batch) {
+bool button(float x, float y, float width, float height, int id, UiContext* context) {
     if (context->mouseX > x &&
         context->mouseX < x + width &&
         context->mouseY > y &&
@@ -62,7 +62,8 @@ bool button(float x, float y, float width, float height, int id, UiContext* cont
 
     context->geometry->startBatch();
     context->geometry->drawNineSlice(x, y, width, height, model, 8);
-    *batch = context->geometry->endBatch();
+    Batch batch = context->geometry->endBatch();
+    context->queue->renderUi(batch);
 
     return value;
 }

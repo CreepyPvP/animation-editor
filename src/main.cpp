@@ -175,6 +175,7 @@ int main() {
     queue.uiShader = uiShader.id;
     queue.uiAtlas = texture;
     queue.init(1000);
+    context.queue = &queue;
 
     float delta = 0.0f;
     float lastFrame = 0.0f;
@@ -222,8 +223,9 @@ int main() {
         geometryGenerator.drawString(100, 100, "Test test.. !! #", &font, 1);
         Batch fontBatch = geometryGenerator.endBatch();
 
-        Batch buttonBatch;
-        bool clicked = button(200, 200, 150, 100, 1, &context, &buttonBatch);
+        bool clicked = button(200, 200, 150, 100, 1, &context);
+        button(400, 200, 150, 100, 2, &context);
+        button(600, 200, 150, 100, 3, &context);
         if (clicked) {
             printf("clicked button\n");
         }
@@ -232,7 +234,6 @@ int main() {
         geometryGenerator.reset();
 
         queue.renderFont(fontBatch);
-        queue.renderUi(buttonBatch);
         queue.execute();
 
         glfwSwapBuffers(globalWindow.handle);
