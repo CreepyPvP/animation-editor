@@ -15,6 +15,7 @@
 #include "nine_slice.hpp"
 #include "texture_atlas.hpp"
 #include "ui.hpp"
+#include "render_queue.hpp"
 
 #define Vao unsigned int
 
@@ -168,6 +169,13 @@ int main() {
     context.geometry = &geometryGenerator;
     context.active = -1;
 
+    RenderQueue queue;
+    queue.fontShader = fontShader.id;
+    queue.fontAtlas = fontAtlas;
+    queue.uiShader = uiShader.id;
+    queue.uiAtlas = texture;
+    queue.init(1000);
+
     float delta = 0.0f;
     float lastFrame = 0.0f;
     int mouseState = GLFW_RELEASE;
@@ -183,6 +191,7 @@ int main() {
         delta = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        // update ui input
         context.hot = -1;
         int newMouseState = glfwGetMouseButton(globalWindow.handle, GLFW_MOUSE_BUTTON_LEFT);
         context.mouseFlags = 0;
@@ -194,9 +203,15 @@ int main() {
                 context.mouseFlags |= MOUSE_JUST_RELEASED;
             }
         }
-        
+
+        // update projection uniforms + clear screen
+        GL(glUseProgram(uiShader.id));
+        GL(setUniformMat4(uiShader.uProjection, &projection));
+        GL(glUseProgram(fontShader.id));
+        GL(setUniformMat4(fontShader.uProjection, &projection));
         GL(glClear(GL_COLOR_BUFFER_BIT));
 
+        // draw grid
         GL(glUseProgram(gridShader.id));
         GL(glBindVertexArray(squareVao));
         glm::vec2 screenDimensions(globalWindow.width, globalWindow.height);
@@ -216,27 +231,9 @@ int main() {
         geometryGenerator.updateUiBuffers(uiVao);
         geometryGenerator.reset();
 
-        GL(glUseProgram(fontShader.id));
-        GL(setUniformMat4(fontShader.uProjection, &projection));
-        GL(glActiveTexture(GL_TEXTURE0));
-        GL(glBindTexture(GL_TEXTURE_2D, fontAtlas));
-        GL(glDrawElements(
-            GL_TRIANGLES, 
-            fontBatch.indexCount, 
-            GL_UNSIGNED_INT, 
-            (void*) (fontBatch.baseIndex * sizeof(unsigned int))
-        ));
-
-        GL(glUseProgram(uiShader.id));
-        GL(setUniformMat4(uiShader.uProjection, &projection));
-        GL(glActiveTexture(GL_TEXTURE0));
-        GL(glBindTexture(GL_TEXTURE_2D, texture));
-        GL(glDrawElements(
-            GL_TRIANGLES, 
-            buttonBatch.indexCount, 
-            GL_UNSIGNED_INT, 
-            (void*) (buttonBatch.baseIndex * sizeof(unsigned int))
-        ));
+        queue.renderFont(fontBatch);
+        queue.renderUi(buttonBatch);
+        queue.execute();
 
         glfwSwapBuffers(globalWindow.handle);
         glfwPollEvents();
